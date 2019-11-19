@@ -1,6 +1,61 @@
+function load_preprocessed_mat(file)
+    data = matread(file)
+    return (t = data["t"], ct = data["ct"], crr = data["crr"], cp = data["cp"], relaxation = data["relaxation"], masks = data["masks"])
+end
+
+function preprocess_dicom_to_mat(; destination, vfa_folders, dce_folders, mask_folder, r1=3.3/1000, num_baseline=3, overwrite=false)
+    @assert length(vfa_folders) == length(dce_folders)
+    make_folder(destination)
+    num_folders = length(vfa_folders)
+    matfiles = fill("", num_folders)
+    for i = 1:num_folders
+        study_id = split(vfa_folders[i], "/")[end-1]
+        file = joinpath(destination, study_id * ".mat")
+        if isfile(file) && overwrite == false
+            matfiles[i] = file
+            continue
+        end
+        computed = compute_concentration(vfa_folder = vfa_folders[i], dce_folder = dce_folders[i], r1 = r1, num_baseline = num_baseline)
+        masks = get_mask(study = study_id, mask_folder = mask_folder)
+        t = computed.t
+        ct = apply_mask(data = computed.ct, mask = masks.tumour)
+        cp = apply_mask(data = computed.ct, mask = masks.aif) ./ (1-0.4)
+        crr = apply_mask(data = computed.ct, mask = masks.muscle)
+
+        cp = mean(cp, dims=1)
+        crr = mean(crr, dims=1)
+
+        T1_tumour = apply_mask(data = computed.T1, mask = masks.tumour)
+        T1_aif = apply_mask(data = computed.T1, mask = masks.aif)
+        T1_muscle = apply_mask(data = computed.T1, mask = masks.muscle)
+        M0_tumour = apply_mask(data = computed.M0, mask = masks.tumour)
+        M0_aif = apply_mask(data = computed.M0, mask = masks.aif)
+        M0_muscle = apply_mask(data = computed.M0, mask = masks.muscle)
+        relaxation = Dict(
+        "T1" => Dict("tumour" => T1_tumour, "muscle" => T1_muscle, "aif" => T1_aif),
+        "M0" => Dict("tumour" => M0_tumour, "muscle" => M0_muscle, "aif" => M0_aif),
+        )
+        matfiles[i] = save_concentration_as_mat(file = file, t = t, ct = ct, crr = vec(crr), cp = vec(cp), relaxation = relaxation, masks = masks)
+    end
+    return matfiles
+end
+
+function save_concentration_as_mat(; file, t, ct, crr, cp, relaxation, masks)
+    output_data = Dict(
+    "t" => t,
+    "ct" => ct,
+    "crr" => crr,
+    "cp" => cp,
+    "relaxation" => relaxation,
+    "masks" => masks
+    )
+    matwrite(file, output_data; compress = true)
+    return file
+end
+
 function compute_concentration(; vfa_folder, dce_folder, r1=3.3/1000, num_baseline::Int=3)
-    vfa = RRIFT.load_vfa_dicom(folder = vfa_folder)
-    dce = RRIFT.load_dce_dicom(folder = dce_folder)
+    vfa = load_vfa_dicom(folder = vfa_folder)
+    dce = load_dce_dicom(folder = dce_folder)
 
     relaxation_maps = fit_relaxation(:despot; vfa...).estimates
     concentration = signal_to_concentration(dce.signal, R10=1.0./relaxation_maps.T1, angle=dce.angle, TR=dce.TR, r1=r1, BAF=num_baseline)
@@ -23,7 +78,7 @@ function load_vfa_dicom(; folder)
         signal_data[:,:,instance] = lookup(dicom, "Pixel Data")'
         flip_angles[instance] = lookup(dicom, "Flip Angle")
     end
-    signal_data = reshape(signal_data, (image_size..., number_of_slices, number_of_flip_angles)) 
+    signal_data = reshape(signal_data, (image_size..., number_of_slices, number_of_flip_angles))
     flip_angles = reshape(flip_angles, (number_of_slices, number_of_flip_angles))[1,:]
     @. flip_angles = deg2rad(flip_angles)
     TR = lookup(dicom_data[1], "Repetition Time")
@@ -32,7 +87,7 @@ end
 
 function load_dce_dicom(; folder, num_slices::Int = 16)
     dicom_data = load_dicom_from_folder(folder)
-    number_of_images = length(dicom_data) 
+    number_of_images = length(dicom_data)
     number_of_timepoints = Int(number_of_images / num_slices)
 
     dummy_image = lookup(dicom_data[1], "Pixel Data")'

@@ -20,22 +20,22 @@ const alt_gbm_name = Dict(
     "TCGA-06-5417-1" => "1.3.6.1.4.1.14519.5.2.1.4591.4001.304604545029494418165835320551"
     )
 
-function download_invivo_studies(studies::AbstractVector{String}=gbm_study_uids; destination_folder::AbstractString, overwrite = false)
-    make_folder(destination_folder)
+function download_invivo_studies(studies::AbstractVector{String}=gbm_study_uids; destination::AbstractString, overwrite = false)
+    make_folder(destination)
 
     number_of_studies = length(studies)
     vfa_folders, dce_folders = [fill("", number_of_studies) for _=1:2]
     for (index, study) in enumerate(studies)
-        (vfa_folders[index], dce_folders[index]) = download_vfa_and_dce(study, destination_folder; overwrite=overwrite)
+        (vfa_folders[index], dce_folders[index]) = download_vfa_and_dce(study, destination; overwrite=overwrite)
     end
     return (vfa_folders = vfa_folders, dce_folders = dce_folders)
 end
 
 download_invivo_studies(study::AbstractString; kwargs...) = download_invivo_studies([study]; kwargs...)
 
-function download_vfa_and_dce(study_id, destination_folder; overwrite = false)
-    vfa_folder = joinpath(destination_folder, study_id, "vfa")
-    dce_folder = joinpath(destination_folder, study_id, "dce")
+function download_vfa_and_dce(study_id, destination; overwrite = false)
+    vfa_folder = joinpath(destination, study_id, "vfa")
+    dce_folder = joinpath(destination, study_id, "dce")
 
     if isdir(vfa_folder) && isdir(dce_folder)
         if !overwrite
@@ -45,14 +45,14 @@ function download_vfa_and_dce(study_id, destination_folder; overwrite = false)
 
     gbm_series = series(study = study_id)
     vfa_series = find_vfa_series(gbm_series)
-    dce_series = find_dce_series(gbm_series)  
+    dce_series = find_dce_series(gbm_series)
 
     if !isdir(vfa_folder) || overwrite == true
-        download_series(vfa_series, destination_folder = vfa_folder)
+        download_series(vfa_series, destination = vfa_folder)
     end
 
     if !isdir(dce_folder) || overwrite == true
-        download_series(dce_series, destination_folder = dce_folder)
+        download_series(dce_series, destination = dce_folder)
     end
     return (vfa_folder, dce_folder)
 end
@@ -77,33 +77,36 @@ function find_in_description(word_to_find::AbstractString, series_dataframe)
     else
         found_index = found_indices[1]
     end
-    found_series = series_dataframe.SeriesInstanceUID[found_index] 
+    found_series = series_dataframe.SeriesInstanceUID[found_index]
     return found_series
 end
 
-function download_series(series_id::AbstractString; destination_folder)
-    make_folder(destination_folder; remove_existing = true)
-    zip_file = joinpath(destination_folder, "downloaded.zip")
+function download_series(series_id::AbstractString; destination)
+    make_folder(destination; remove_existing = true)
+    zip_file = joinpath(destination, "downloaded.zip")
     images(series = series_id, file = zip_file)
-    unzip_command = `unzip -o $zip_file -d $destination_folder`
+    unzip_command = `unzip -o $zip_file -d $destination`
     run(unzip_command)
     rm(zip_file)
-    return destination_folder
+    return destination
 end
 
-function download_invivo_masks(; destination_folder)
-    make_folder(destination_folder; remove_existing = true)
-    zip_file = joinpath(destination_folder, "invivo_masks.zip")
+function download_invivo_masks(; destination, overwrite = false)
+    if isdir(destination) && overwrite == false
+        return destination
+    end
+    make_folder(destination; remove_existing = true)
+    zip_file = joinpath(destination, "invivo_masks.zip")
     download("https://osf.io/uxe3p/download", zip_file)
-    unzip_cmd = `unzip -o $zip_file -d $destination_folder`
+    unzip_cmd = `unzip -o $zip_file -d $destination`
     run(unzip_cmd)
     rm(zip_file)
-    rename_masks(mask_folder = destination_folder)
-    return destination_folder
+    rename_masks(folder = destination)
+    return destination
 end
 
-function rename_masks(; mask_folder)
-    for (root, dirs, files) in walkdir(mask_folder)
+function rename_masks(; folder)
+    for (root, dirs, files) in walkdir(folder)
         for file in files
             if splitext(file)[2] == ".mat"
                 oldfile = joinpath(root, file)
