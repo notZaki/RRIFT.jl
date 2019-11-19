@@ -3,6 +3,13 @@ uuid = "24182d0a-53cc-4645-a8a8-b61be1753720"
 authors = ["Zaki A"]
 version = "0.1.0"
 
+[deps]
+CancerImagingArchive = "1c555f4c-8d6b-45c3-bbc1-c64989f538fe"
+DICOM = "a26e6606-dd52-5f6a-a97f-4f611373d757"
+MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
+Perfusion = "f2c4f5d8-8176-4777-9c43-b2c4f12bfc82"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
 [compat]
 julia = "1.2"
 
