@@ -120,15 +120,15 @@ function rename_masks(; folder)
     return
 end
 
-function get_mask(; study, mask_folder)
-    aif_dir = joinpath(mask_folder, "AIF")
-    muscle_dir = joinpath(mask_folder, "Muscle")
-    tumour_dir = joinpath(mask_folder, "Tumour")
-    filename = study * ".mat"
-
-    aif = convert(BitArray{3}, matread(joinpath(aif_dir, filename))["mask"])
-    muscle = convert(BitArray{3}, matread(joinpath(muscle_dir, filename))["mask"])
-    tumour = convert(BitArray{3}, matread(joinpath(tumour_dir, filename))["mask"])
-
-    return (aif = aif, muscle = muscle, tumour = tumour)
+function download_invivo_preprocessed(; destination, overwrite = false)
+    if isdir(destination) && overwrite == false
+        return destination
+    end
+    make_folder(destination; remove_existing = true)
+    zip_file = joinpath(destination, "preprocessed.zip")
+    download("https://osf.io/d3ext/download", zip_file)
+    unzip_cmd = `unzip -o $zip_file -d $destination`
+    run(unzip_cmd)
+    rm(zip_file)
+    return destination
 end

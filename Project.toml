@@ -7,8 +7,10 @@ version = "0.1.0"
 CancerImagingArchive = "1c555f4c-8d6b-45c3-bbc1-c64989f538fe"
 DICOM = "a26e6606-dd52-5f6a-a97f-4f611373d757"
 MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
+NumericalIntegration = "e7bfaba1-d571-5449-8927-abc22e82249b"
 Perfusion = "f2c4f5d8-8176-4777-9c43-b2c4f12bfc82"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 julia = "1.2"

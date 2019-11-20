@@ -40,6 +40,19 @@ function preprocess_dicom_to_mat(; destination, vfa_folders, dce_folders, mask_f
     return matfiles
 end
 
+function get_mask(; study, mask_folder)
+    aif_dir = joinpath(mask_folder, "AIF")
+    muscle_dir = joinpath(mask_folder, "Muscle")
+    tumour_dir = joinpath(mask_folder, "Tumour")
+    filename = study * ".mat"
+
+    aif = convert(BitArray{3}, matread(joinpath(aif_dir, filename))["mask"])
+    muscle = convert(BitArray{3}, matread(joinpath(muscle_dir, filename))["mask"])
+    tumour = convert(BitArray{3}, matread(joinpath(tumour_dir, filename))["mask"])
+
+    return (aif = aif, muscle = muscle, tumour = tumour)
+end
+
 function save_concentration_as_mat(; file, t, ct, crr, cp, relaxation, masks)
     output_data = Dict(
     "t" => t,
