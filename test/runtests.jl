@@ -3,8 +3,12 @@ using Test
 
 @testset "in-vivo" begin
     test_study = RRIFT.gbm_study_uids[1]
+    # Run download functions twice to check for overwrite protection
     dicom_folders = download_invivo_studies(test_study, destination = "./data/tcga-gbm")
+    download_invivo_studies(test_study, destination = "./data/tcga-gbm")
     mask_folder = download_invivo_masks(destination = "./data/tcga-gbm-masks")
+    download_invivo_masks(destination = "./data/tcga-gbm-masks")
+
     mat_file_test = preprocess_dicom_to_mat(destination = "./data/tcga-gbm-test", dicom_folders = dicom_folders, mask_folder = mask_folder)
 
     mat_folder = "./data/tcga-gbm-mat"

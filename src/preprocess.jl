@@ -83,13 +83,13 @@ function load_vfa_dicom(; folder)
     number_of_flip_angles = length(unique_flip_angles)
     number_of_slices = Int(number_of_images / number_of_flip_angles)
 
-    dummy_image = lookup(dicom_data[1], "Pixel Data")'
+    dummy_image = lookup(dicom_data[1], "Pixel Data")
     image_size = size(dummy_image)
     signal_data = zeros(image_size..., number_of_images)
     flip_angles = zeros(number_of_images)
     for dicom in dicom_data
         instance = lookup(dicom, "Instance Number")
-        signal_data[:,:,instance] = lookup(dicom, "Pixel Data")'
+        signal_data[:,:,instance] = lookup(dicom, "Pixel Data")
         flip_angles[instance] = lookup(dicom, "Flip Angle")
     end
     signal_data = reshape(signal_data, (image_size..., number_of_slices, number_of_flip_angles))
@@ -104,13 +104,13 @@ function load_dce_dicom(; folder, num_slices::Int = 16)
     number_of_images = length(dicom_data)
     number_of_timepoints = Int(number_of_images / num_slices)
 
-    dummy_image = lookup(dicom_data[1], "Pixel Data")'
+    dummy_image = lookup(dicom_data[1], "Pixel Data")
     image_size = size(dummy_image)
     signal_data = zeros(image_size..., number_of_images)
     timepoints = zeros(number_of_images)
     for dicom in dicom_data
         instance = lookup(dicom, "Instance Number")
-        signal_data[:,:,instance] = lookup(dicom, "Pixel Data")'
+        signal_data[:,:,instance] = lookup(dicom, "Pixel Data")
         timepoints[instance] = lookup(dicom, "Trigger Time")
     end
     signal_data = reshape(signal_data, (image_size..., num_slices, number_of_timepoints))

@@ -96,7 +96,9 @@ uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
 version = "2.2.0"
 
 [[DICOM]]
-git-tree-sha1 = "5d193ed61d0287d108aebbb2b5b793bfdd895238"
+git-tree-sha1 = "9a1cd1787bc086ce306d17c8ae3c0e13058c9a19"
+repo-rev = "format"
+repo-url = "https://github.com/notZaki/DICOM.jl.git"
 uuid = "a26e6606-dd52-5f6a-a97f-4f611373d757"
 version = "0.5.0"
 
