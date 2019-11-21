@@ -12,7 +12,11 @@ using Test
     
     test_fits_a = process_patients(mat_file_test)
     test_fits_b = process_patients(joinpath(mat_folder, test_study * ".mat"))
-    @test test_fits_a == test_fits_b
+
+    thresh = 1e-12
+    for param in (:kt, :kep, :ve, :vp, :kt_rr, :kep_rr, :ve_rr), method in (:tofts, :rrift)
+        @test thresh > maximum(abs.(test_fits_a[param][method][1] .- test_fits_b[param][method][1]))
+    end
 
     fits = process_patients(mat_folder)
 
