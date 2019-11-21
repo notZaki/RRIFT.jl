@@ -3,7 +3,8 @@ function load_preprocessed_mat(file)
     return (t = data["t"], ct = data["ct"], crr = data["crr"], cp = data["cp"], relaxation = data["relaxation"], masks = data["masks"])
 end
 
-function preprocess_dicom_to_mat(; destination, vfa_folders, dce_folders, mask_folder, r1=3.3/1000, num_baseline=3, overwrite=false)
+function preprocess_dicom_to_mat(; destination, dicom_folders, mask_folder, r1=3.3/1000, num_baseline=3, overwrite=false)
+    @extract (vfa_folders, dce_folders) dicom_folders
     @assert length(vfa_folders) == length(dce_folders)
     make_folder(destination)
     num_folders = length(vfa_folders)
