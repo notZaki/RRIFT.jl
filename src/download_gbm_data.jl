@@ -101,23 +101,7 @@ function download_invivo_masks(; destination, overwrite = false)
     unzip_cmd = `unzip -o $zip_file -d $destination`
     run(unzip_cmd)
     rm(zip_file)
-    rename_masks(folder = destination)
     return destination
-end
-
-function rename_masks(; folder)
-    for (root, dirs, files) in walkdir(folder)
-        for file in files
-            if splitext(file)[2] == ".mat"
-                oldfile = joinpath(root, file)
-                oldfilename = splitext(file)[1]
-                newfilename = alt_gbm_name[oldfilename] * ".mat"
-                newfile = joinpath(root, newfilename)
-                mv(oldfile, newfile)
-            end
-        end
-    end
-    return
 end
 
 function download_invivo_preprocessed(; destination, overwrite = false)
