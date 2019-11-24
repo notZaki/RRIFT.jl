@@ -3,7 +3,7 @@ module RRIFT
 using Statistics
 
 include("utils.jl")
-export apply_mask, autocrop, negatives_to_zero!, ccc
+export apply_mask, crop, negatives_to_zero!, ccc
 
 using CancerImagingArchive: series, images
 using DICOM: dcm_parse, lookup
@@ -42,13 +42,8 @@ function fit_cerrm_with_rrift(; crr, cp, t, ct, tail_start, kep_rr=0.0, mask = t
     kep_rr = cerrm.kep_rr
     kt_rr = fit_rrift(t = t, cp = cp, crr = crr, kep_rr = kep_rr, tail_start = tail_start)
     ve_rr = kt_rr / kep_rr
-    
-    kt = @. cerrm.rel_kt * kt_rr
-    ve = @. cerrm.rel_ve * ve_rr
-    vp = @. cerrm.rel_vp * kt_rr
-    kep = cerrm.kep
-
-    return (kt = kt, kep = kep, ve = ve, vp = vp, kep_rr = kep_rr, kt_rr = kt_rr, ve_rr = ve_rr)
+    est = relative_to_absolute(cerrm; kt_rr = kt_rr, ve_rr = ve_rr)
+    return (kt = est.kt, kep = est.kep, ve = est.ve, vp = est.vp, kep_rr = kep_rr, kt_rr = kt_rr, ve_rr = ve_rr)
 end
 function relative_to_absolute(rel_params; kt_rr, ve_rr)
     kt = @. rel_params.rel_kt * kt_rr
