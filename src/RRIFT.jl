@@ -19,7 +19,7 @@ export compute_concentration, preprocess_dicom_to_mat, load_preprocessed_mat
 using NumericalIntegration: cumul_integrate, TrapezoidalFast
 using Perfusion: interquartile_mean, resolve_mask_size, positive_only_mask
 include("cerrm.jl")
-export fit_cerrm
+export fit_errm, fit_cerrm
 using Statistics: mean, quantile, std
 
 using Perfusion: fit_model
@@ -37,8 +37,8 @@ function fit_rrift(; crr::AbstractVector, cp::AbstractVector, t::AbstractVector,
     kt_rr = denominator \ numerator
     return kt_rr
 end
-function fit_cerrm_with_rrift(; crr, cp, t, ct, tail_start)
-    cerrm = fit_cerrm(crr = crr, ct = ct, t = t)
+function fit_cerrm_with_rrift(; crr, cp, t, ct, tail_start, kep_rr=0.0)
+    cerrm = fit_cerrm(crr = crr, ct = ct, t = t, kep_rr = kep_rr)
     kep_rr = cerrm.kep_rr
     kt_rr = fit_rrift(t = t, cp = cp, crr = crr, kep_rr = kep_rr, tail_start = tail_start)
     ve_rr = kt_rr / kep_rr
@@ -50,5 +50,12 @@ function fit_cerrm_with_rrift(; crr, cp, t, ct, tail_start)
 
     return (kt = kt, kep = kep, ve = ve, vp = vp, kep_rr = kep_rr, kt_rr = kt_rr, ve_rr = ve_rr)
 end
-export fit_rrift, fit_cerrm_with_rrift
+function relative_to_absolute(rel_params; kt_rr, ve_rr)
+    kt = @. rel_params.rel_kt * kt_rr
+    ve = @. rel_params.rel_ve * ve_rr
+    vp = @. rel_params.rel_vp * kt_rr
+    kep = rel_params.kep
+    return (kt = kt, ve = ve, vp = vp, kep = kep)
+end
+export fit_rrift, fit_cerrm_with_rrift, relative_to_absolute
 end # module
