@@ -37,8 +37,8 @@ function fit_rrift(; crr::AbstractVector, cp::AbstractVector, t::AbstractVector,
     kt_rr = denominator \ numerator
     return kt_rr
 end
-function fit_cerrm_with_rrift(; crr, cp, t, ct, tail_start, kep_rr=0.0)
-    cerrm = fit_cerrm(crr = crr, ct = ct, t = t, kep_rr = kep_rr)
+function fit_cerrm_with_rrift(; crr, cp, t, ct, tail_start, kep_rr=0.0, mask = true)
+    cerrm = fit_cerrm(crr = crr, ct = ct, t = t, kep_rr = kep_rr, mask = mask)
     kep_rr = cerrm.kep_rr
     kt_rr = fit_rrift(t = t, cp = cp, crr = crr, kep_rr = kep_rr, tail_start = tail_start)
     ve_rr = kt_rr / kep_rr
