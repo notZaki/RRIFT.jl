@@ -253,3 +253,8 @@ Concordance correlation coefficients between Tofts and RRIFT fits
     - for vp: $(ccc(est_tofts[:vp], est_rrift[:vp], lim=(0, 0.05)))
 """)
 ```
+
+```@setup ex
+rm("./data", recursive=true)
+```
+
