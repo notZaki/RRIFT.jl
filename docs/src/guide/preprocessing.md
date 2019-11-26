@@ -78,7 +78,7 @@ T1 = crop(relaxation_maps.T1)
 slice = 8
 figopts = (c = :cinferno, yflip = true, aspect_ratio = :equal, axis = nothing)
 p1 = heatmap(M0[:,:,slice]; clim=(0, 15000), title="M0", figopts...)
-p2 = heatmap(T1[:,:,slice]; clim=(0, 15000), title="T1", figopts...)
+p2 = heatmap(T1[:,:,slice]; clim=(500, 3000), title="T1", figopts...)
 plot(p1, p2, layout=(1,2))
 savefig("relaxation_maps.png"); nothing # hide
 ```

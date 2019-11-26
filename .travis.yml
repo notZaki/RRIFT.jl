@@ -15,10 +15,6 @@ jobs:
   include:
     - stage: Documentation
       julia: 1.2
-      addons:
-        apt:
-          packages:
-            - qt5-default
       script: julia --project=docs -e '
           using Pkg;
           Pkg.add(PackageSpec(url="https://github.com/notZaki/CancerImagingArchive.jl.git"));
