@@ -1,5 +1,7 @@
 ```@setup ex
 using RRIFT, Perfusion, Statistics, Plots
+
+println("Fitting")
 ```
 
 # Pre-processing
@@ -200,3 +202,6 @@ download_invivo_preprocessed(destination = mat_dir)
 mat_files = readdir(mat_dir)
 ```
 
+```@setup ex
+println("End Preprocessing")
+```

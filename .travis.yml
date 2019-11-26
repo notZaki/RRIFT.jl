@@ -15,12 +15,8 @@ jobs:
   include:
     - stage: Documentation
       julia: 1.2
-      addons:
-        apt:
-          - qt5-default
       script: julia --project=docs -e '
           using Pkg;
-          Pkg.rm("Perfusion");
           Pkg.add(PackageSpec(url="https://github.com/notZaki/CancerImagingArchive.jl.git"));
           Pkg.add(PackageSpec(url="https://github.com/notZaki/Perfusion.jl.git"));
           Pkg.develop(PackageSpec(path=pwd()));

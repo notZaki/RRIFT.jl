@@ -16,6 +16,8 @@ makedocs(;
     authors="Zaki A",
 )
 
+rm("./docs/build/guide/data", recursive = true)
+
 deploydocs(;
     repo="github.com/notZaki/RRIFT.jl",
 )

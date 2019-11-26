@@ -1,6 +1,7 @@
 ```@setup ex
 using RRIFT
 
+println("Downloading")
 chosen_study_uid = RRIFT.gbm_study_uids[8]
 dicom_folders = download_invivo_studies(chosen_study_uid, destination = "./data/tcga-gbm-dicom")
 ```
@@ -60,3 +61,6 @@ To save time, the product of these post-processing steps has been saved in .mat 
 download_invivo_preprocessed(destination = "./data/tcga-gbm-mat")
 ```
 
+```@setup ex
+println("End Downloading")
+```

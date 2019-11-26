@@ -1,6 +1,7 @@
 ```@setup ex
 using RRIFT, Plots, Perfusion, Statistics
 
+println("Fitting")
 figopts = (framestyle = :grid, gridalpha=0.5, gridstyle=:dot, linewidth = 2.5, 
         tickfontsize = 11, fg_legend = :transparent, legendfontsize = 11, legend=:bottomright)
 
@@ -271,6 +272,5 @@ Concordance correlation coefficients between Tofts and RRIFT fits
 ```
 
 ```@setup ex
-rm("./data", recursive=true)
+println("End Fitting")
 ```
-
