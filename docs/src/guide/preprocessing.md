@@ -1,7 +1,10 @@
 ```@setup ex
 using RRIFT, Perfusion, Statistics, Plots
 
-println("Fitting")
+ENV["GKSwstype"] = "100"
+gr()
+
+println("Preprocessing")
 ```
 
 # Pre-processing

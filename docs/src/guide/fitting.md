@@ -1,6 +1,9 @@
 ```@setup ex
 using RRIFT, Plots, Perfusion, Statistics
 
+ENV["GKSwstype"] = "100"
+gr()
+
 println("Fitting")
 figopts = (framestyle = :grid, gridalpha=0.5, gridstyle=:dot, linewidth = 2.5, 
         tickfontsize = 11, fg_legend = :transparent, legendfontsize = 11, legend=:bottomright)
