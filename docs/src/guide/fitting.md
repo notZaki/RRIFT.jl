@@ -53,13 +53,17 @@ The $\ast$ is a convolution while the fitting parameters are $K^{trans}$, $k_{ep
 The input function along with concentration-time data for a single voxel are shown below:
 ```@example ex
 plot(t, cp; lineopts("Input function")..., c = :red, legend = :topright)
+savefig("cp.png"); nothing # hide
 ```
+![cp](cp.png)
 
 The concentration-time data in a single tumour voxel is shown below:
 ```@example ex
 single_ct = ct[100, :]
 scatter(t, single_ct; lineopts("Concentration-time data in a tumour voxel")...)
+savefig("single_ct.png"); nothing # hide
 ```
+![single_ct](single_ct.png)
 
 Fitting the extended tofts model to the single-voxel curve results in:
 ```@example ex
@@ -69,7 +73,9 @@ fitted_curve = model_tofts(t = t, cp = cp,
 
 scatter(t, single_ct; lineopts("Measured curve in single voxel")...)
 plot!(t, fitted_curve; title = "Extended Tofts model fit", lineopts("Extended Tofts model fit")...)
+savefig("tofts_fit.png"); nothing # hide
 ```
+![tofts_fit](tofts_fit.png)
 where the fitting parameters are:
 ```@repl ex
 est_tofts
@@ -85,7 +91,9 @@ An alternative is the reference region model which uses a healthy reference tiss
 The reference tissue curve is:
 ```@example ex
 plot(t, crr; lineopts("Reference tissue curve")..., c=:green)
+savefig("crr.png"); nothing # hide
 ```
+![crr](crr.png)
 
 Fitting the extended reference region model to the single voxel results in:
 ```@repl ex
@@ -124,7 +132,9 @@ est_errm_allvoxels = fit_errm(t=t, ct=ct, crr=crr)
 # Plot a histogram of the kep_rr estimates
 histogram(est_errm_allvoxels.kep_rr[0 .< est_errm_allvoxels.kep_rr .< 2], bins=100, linealpha=0; 
     lineopts("Estimated kep_rr")..., xlabel="Estimate kep_rr [1/min]", ylabel="Counts")
+savefig("hist_keprr.png"); nothing # hide
 ```
+![hist_keprr](hist_keprr.png)
 
 There is a peak in the histogram close to 0.3~0.4.
 We can estimate a single $k_{ep,RR}$ value by considering only the fits with positive estimates and then taking the interquartile mean of $k_{ep,RR}$ from those fits.
@@ -163,7 +173,9 @@ The paper proposes RRIFT which takes advantages of two features:
 tail_start = findfirst(t .> 2)
 plot(t, cp; lineopts("Input function")...)
 plot!(t[tail_start:end], cp[tail_start:end]; lineopts("Input function tail")...)
+savefig("tail.png"); nothing # hide
 ```
+![tail](tail.png)
 
 The equation to estimate $K^{trans}_{RR}$ is:
 ```math
@@ -192,7 +204,9 @@ println("Estimated ve_rr: $(round(est_ve_rr, digits=4))")
 scatter(denominator, numerator; lineopts("Data")..., legend=:bottomright)
 plot!(denominator, denominator .* est_kt_rr; 
     lineopts("RRIFT fit")..., xlabel = "Denominator", ylabel="Numerator")
+savefig("rrift_fit.png"); nothing # hide
 ```
+![rrift_fit](rrift_fit.png)
 
 Now we can use the estimated $K^{trans}_{RR}$ and $v_{e,RR}$ to convert the relative estimates from the reference region model into absolute estimates.
 
@@ -243,7 +257,9 @@ slice = 6
 p1 = heatmap(maps[:kt][:tofts][:,:,slice], c=:cinferno, yflip=true, aspect_ratio=:equal, clim=(0, 0.2); lineopts("")..., title="Tofts", axis=nothing, xlabel="", ylabel="")
 p2 = heatmap(maps[:kt][:rrift][:,:,slice], c=:cinferno, yflip=true, aspect_ratio=:equal, clim=(0, 0.2); lineopts("")..., title="RRIFT", axis=nothing, xlabel="", ylabel="")
 plot(p1, p2, layout=(1,2))
+savefig("voxelwise.png"); nothing # hide
 ```
+![voxelwise](voxelwise.png)
 
 ```@example ex
 println("""
