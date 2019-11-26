@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Fitting · RRIFT.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">RRIFT.jl</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Introduction</a></li><li><span class="tocitem">Guide</span><ul><li><a class="tocitem" href="../downloading/">Downloading</a></li><li><a class="tocitem" href="../preprocessing/">Pre-processing</a></li><li class="is-active"><a class="tocitem" href>Fitting</a><ul class="internal"><li><a class="tocitem" href="#Downloading-the-pre-processed-data-1"><span>Downloading the pre-processed data</span></a></li><li><a class="tocitem" href="#Single-patient-example-1"><span>Single patient example</span></a></li><li><a class="tocitem" href="#Voxel-wise-fitting-1"><span>Voxel-wise fitting</span></a></li></ul></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Guide</a></li><li class="is-active"><a href>Fitting</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Fitting</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/notZaki/RRIFT.jl/blob/master/docs/src/guide/fitting.md#L" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="In-vivo-analysis-on-glioblastoma-multiforme-(GBM)-1"><a class="docs-heading-anchor" href="#In-vivo-analysis-on-glioblastoma-multiforme-(GBM)-1">In-vivo analysis on glioblastoma multiforme (GBM)</a><a class="docs-heading-anchor-permalink" href="#In-vivo-analysis-on-glioblastoma-multiforme-(GBM)-1" title="Permalink"></a></h1><p>This section will apply the reference region and input function tail (RRIFT) method on the in-vivo data. The Tofts model will also be fitted.</p><h2 id="Downloading-the-pre-processed-data-1"><a class="docs-heading-anchor" href="#Downloading-the-pre-processed-data-1">Downloading the pre-processed data</a><a class="docs-heading-anchor-permalink" href="#Downloading-the-pre-processed-data-1" title="Permalink"></a></h2><p>For simplcity, we will use the pre-processed data which were previously generated.</p><pre><code class="language-julia">mat_dir = &quot;./data/tcga-gbm-mat&quot;
+download_invivo_preprocessed(destination = mat_dir)
+mat_files = joinpath.(mat_dir, readdir(mat_dir))</code></pre><pre><code class="language-none">8-element Array{String,1}:
+ &quot;./data/tcga-gbm-mat/1.3.6.1.4.1.14519.5.2.1.4591.4001.100057969162276274933613772317.mat&quot;
+ &quot;./data/tcga-gbm-mat/1.3.6.1.4.1.14519.5.2.1.4591.4001.269887096484012292940330991126.mat&quot;
+ &quot;./data/tcga-gbm-mat/1.3.6.1.4.1.14519.5.2.1.4591.4001.278082550121070125285213632206.mat&quot;
+ &quot;./data/tcga-gbm-mat/1.3.6.1.4.1.14519.5.2.1.4591.4001.304604545029494418165835320551.mat&quot;
+ &quot;./data/tcga-gbm-mat/1.3.6.1.4.1.14519.5.2.1.4591.4001.335353575986269052491315637674.mat&quot;
+ &quot;./data/tcga-gbm-mat/1.3.6.1.4.1.14519.5.2.1.4591.4001.365805576275232517344053939830.mat&quot;
+ &quot;./data/tcga-gbm-mat/1.3.6.1.4.1.14519.5.2.1.4591.4001.763554173270318063812534542847.mat&quot;
+ &quot;./data/tcga-gbm-mat/1.3.6.1.4.1.14519.5.2.1.4591.4001.961791689281776173751323306588.mat&quot;</code></pre><h2 id="Single-patient-example-1"><a class="docs-heading-anchor" href="#Single-patient-example-1">Single patient example</a><a class="docs-heading-anchor-permalink" href="#Single-patient-example-1" title="Permalink"></a></h2><p>The next few sections will fit the extended Tofts model and the RRIFT method on a single DCE-MRI study.</p><pre><code class="language-julia">chosen_mat_file = mat_files[7]
+mat_data = load_preprocessed_mat(chosen_mat_file)
+@extract (t, ct, crr, cp, masks) mat_data
+
+println(&quot;&quot;&quot;
+Loaded the following variables:
+    - `t` is an $(typeof(t)) with length $(length(t))
+    - `ct` is an $(typeof(ct)) with size $(size(ct))
+    - `crr` is an $(typeof(crr)) with length $(length(crr))
+    - `cp` is an $(typeof(cp)) with length $(length(cp))
+    - `masks` is a $(typeof(masks)) with keys $(keys(masks))
+&quot;&quot;&quot;)</code></pre><pre><code class="language-none">Loaded the following variables:
+    - `t` is an Array{Float64,1} with length 70
+    - `ct` is an Array{Float64,2} with size (15982, 70)
+    - `crr` is an Array{Float64,1} with length 70
+    - `cp` is an Array{Float64,1} with length 70
+    - `masks` is a Dict{String,Any} with keys [&quot;muscle&quot;, &quot;tumour&quot;, &quot;aif&quot;]</code></pre><h3 id="Extended-tofts-model-fit-1"><a class="docs-heading-anchor" href="#Extended-tofts-model-fit-1">Extended tofts model fit</a><a class="docs-heading-anchor-permalink" href="#Extended-tofts-model-fit-1" title="Permalink"></a></h3><p>The extended tofts model has the form $ C<em>t(t) = K^{trans} \cdot C</em>p(t) \ast \exp(-k<em>{ep} \cdot t) + v</em>p \cdot C<em>p(t) $ where C</em>t$ is the concentration in tissue, <span>$C_p$</span> is the input function, and <span>$t$</span> is the time, i.e. <code>ct</code>, <code>cp</code> and, <code>t</code> in the code, respectively. The <span>$\ast$</span> is a convolution while the fitting parameters are <span>$K^{trans}$</span>, <span>$k_{ep}$</span>, and <span>$v_p$</span>, along with a derived parameter <span>$v_e = K^{trans} / k_{ep}$</span> (not shown in equation).</p><p>The input function along with concentration-time data for a single voxel are shown below:</p><pre><code class="language-julia">plot(t, cp; lineopts(&quot;Input function&quot;)..., c = :red, legend = :topright)</code></pre><pre><code class="language-none">/home/travis/.julia/packages/GR/oiZD3/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre><p><img src="../cp.png" alt="cp"/></p><p>The concentration-time data in a single tumour voxel is shown below:</p><pre><code class="language-julia">single_ct = ct[100, :]
+scatter(t, single_ct; lineopts(&quot;Concentration-time data in a tumour voxel&quot;)...)</code></pre><pre><code class="language-none">/home/travis/.julia/packages/GR/oiZD3/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre><p><img src="../single_ct.png" alt="single_ct"/></p><p>Fitting the extended tofts model to the single-voxel curve results in:</p><pre><code class="language-julia">est_tofts = fit_model(:extendedtofts, :lls, ct = single_ct, t = t, cp = cp).estimates
+fitted_curve = model_tofts(t = t, cp = cp,
+    parameters = (kt = est_tofts.kt[1], kep = est_tofts.kep[1], vp = est_tofts.vp[1]))
+
+scatter(t, single_ct; lineopts(&quot;Measured curve in single voxel&quot;)...)
+plot!(t, fitted_curve; title = &quot;Extended Tofts model fit&quot;, lineopts(&quot;Extended Tofts model fit&quot;)...)</code></pre><pre><code class="language-none">/home/travis/.julia/packages/GR/oiZD3/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre><p><img src="../tofts_fit.png" alt="tofts_fit"/> where the fitting parameters are:</p><pre><code class="language-julia-repl">julia&gt; est_tofts
+(kt = [0.08883412510741831], kep = [1.0327259084518505], vp = [0.038510892935098386], ve = [0.086019072805667])</code></pre><h3 id="Extended-reference-region-model-1"><a class="docs-heading-anchor" href="#Extended-reference-region-model-1">Extended reference region model</a><a class="docs-heading-anchor-permalink" href="#Extended-reference-region-model-1" title="Permalink"></a></h3><p>One of the issues with the Tofts model is that it require knowledge of the input function <code>cp</code>. The input function has a sharp initial peak and a fast temporal resolution is needed to accurately measure it.  This requires sacrificing SNR, spatial resolution, and volume coverage, all of which are precious. </p><p>An alternative is the reference region model which uses a healthy reference tissue <code>crr</code> as a surrogate for <code>cp</code>. The reference tissue curve is:</p><pre><code class="language-julia">plot(t, crr; lineopts(&quot;Reference tissue curve&quot;)..., c=:green)</code></pre><pre><code class="language-none">/home/travis/.julia/packages/GR/oiZD3/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre><p><img src="../crr.png" alt="crr"/></p><p>Fitting the extended reference region model to the single voxel results in:</p><pre><code class="language-julia-repl">julia&gt; est_errm = fit_errm(t = t, ct = single_ct, crr = crr)
+(rel_kt = [1.0120112732105304], rel_ve = [-0.11917800561962306], rel_vp = [0.5360991512455678], kep = [0.12263746137670792], kep_rr = [-0.014442218627429337])</code></pre><p>The extended reference region model provides estimates for: <span>$K^{trans}/K^{trans}_{RR}$</span>, <span>$v_e/v_{e,RR}$</span>, <span>$v_p/K^{trans}_{RR}$</span>,  <span>$k_{ep}$</span>, and <span>$k_{ep,RR}$</span>. These are <code>rel_kt</code>, <code>rel_ve</code>, <code>rel_vp</code>, <code>kep</code> and <code>kep_rr</code> in the code, respectively.  The parameters with the <span>$RR$</span> subscript represent the reference tissue.  In order to get <span>$K^{trans}$</span>, <span>$v_e$</span>, and <span>$v_p$</span>, we need to know the reference tissue&#39;s <span>$K^{trans}_{RR}$</span> and <span>$v_{e,RR}$</span>.</p><p>Let&#39;s first look at the bright side: the reference region model provides en estimate for <span>$k_{ep}$</span> without needing an input function. Unfortunately, this value does not agree with the estimate we got earlier from the Tofts model:</p><pre><code class="language-julia">println(&quot;&quot;&quot;
+kep estimated with:
+    - Tofts model: $(est_tofts.kep[1])
+    - Ref.Region model: $(est_errm.kep[1])
+&quot;&quot;&quot;)</code></pre><pre><code class="language-none">kep estimated with:
+    - Tofts model: 1.0327259084518505
+    - Ref.Region model: 0.12263746137670792</code></pre><p>Well, let&#39;s look at the <em>other</em> bright side: the reference region model provides an estimate for <span>$k_{ep,RR}$</span>.  Each fit on a tumour voxel produces an estimate for <span>$k_{ep,RR}$</span>.  In theory, all fits should estimate the same <span>$k_{ep,RR}$</span> because this parameter described the reference tissue and all fits use the same reference tissue curve. In practice, the estimated value varies due to noise and other fitting artifacts—for example, the voxel&#39;s estimated <span>$k_{ep,RR}$</span> is -0.01 which is unphysical. However, most of the fits should be centered around the same value.</p><pre><code class="language-julia"># Fit all tumour voxels with the extended reference region model
+est_errm_allvoxels = fit_errm(t=t, ct=ct, crr=crr)
+# Plot a histogram of the kep_rr estimates
+histogram(est_errm_allvoxels.kep_rr[0 .&lt; est_errm_allvoxels.kep_rr .&lt; 2], bins=100, linealpha=0;
+    lineopts(&quot;Estimated kep_rr&quot;)..., xlabel=&quot;Estimate kep_rr [1/min]&quot;, ylabel=&quot;Counts&quot;)</code></pre><pre><code class="language-none">/home/travis/.julia/packages/GR/oiZD3/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre><p><img src="../hist_keprr.png" alt="hist_keprr"/></p><p>There is a peak in the histogram close to 0.3~0.4. We can estimate a single <span>$k_{ep,RR}$</span> value by considering only the fits with positive estimates and then taking the interquartile mean of <span>$k_{ep,RR}$</span> from those fits.</p><pre><code class="language-julia">positive_mask = RRIFT.positive_only_mask(est_errm_allvoxels)
+est_kep_rr = interquartile_mean(est_errm_allvoxels.kep_rr[positive_mask])
+println(&quot;Estimated kep_rr: $est_kep_rr&quot;)</code></pre><pre><code class="language-none">Estimated kep_rr: 0.3923109294461705</code></pre><p>Now that we have a single estimate for kep_rr, we can re-fit the reference region model but this time we force the fits to have the same kep_rr value. This two-fit approach is called the constrained extended reference region model, and it leads to better agreement with the Tofts fit:</p><pre><code class="language-julia"># Refit using a fixed kep_rr
+est_cerrm = fit_cerrm(t = t, ct = single_ct, crr = crr, kep_rr = est_kep_rr)
+
+println(&quot;&quot;&quot;
+kep estimated with:
+    - Tofts model: $(est_tofts.kep[1])
+    - Constrained Ref.Region model: $(est_cerrm.kep[1])
+&quot;&quot;&quot;)</code></pre><pre><code class="language-none">kep estimated with:
+    - Tofts model: 1.0327259084518505
+    - Constrained Ref.Region model: 1.0553217377130963</code></pre><h3 id="Reference-region-and-input-function-tail-(RRIFT)-method-1"><a class="docs-heading-anchor" href="#Reference-region-and-input-function-tail-(RRIFT)-method-1">Reference region and input function tail (RRIFT) method</a><a class="docs-heading-anchor-permalink" href="#Reference-region-and-input-function-tail-(RRIFT)-method-1" title="Permalink"></a></h3><p>Let&#39;s return our attention to the fact that the reference region model gives us relative parameters.  In order to get absolute parameters, we need to know the reference tissue parameters: <span>$K^{trans}_{RR}$</span> and <span>$v_{e,RR}$</span>. This is typically done by using literature-based values of muscle, but <span>$K^{trans}_{RR}$</span> varies substantially between patients and between muscles.</p><p>The paper proposes RRIFT which takes advantages of two features:</p><ol><li>We know <span>$k_{ep,RR}$</span> already. This is useful because <span>$k_{ep,RR} = K^{trans}_{RR}/v_{e,RR}$</span>, so we only need to know either <span>$K^{trans}_{RR}$</span> or <span>$v_{e,RR}$</span>.</li><li>The peak part of the input function <code>cp</code> is hard to measure, but the rest of the input function is fairly &quot;flat&quot; and could be measured with a slow scan. This &quot;input function tail&quot; is plotted next:</li></ol><pre><code class="language-julia">tail_start = findfirst(t .&gt; 2)
+plot(t, cp; lineopts(&quot;Input function&quot;)...)
+plot!(t[tail_start:end], cp[tail_start:end]; lineopts(&quot;Input function tail&quot;)...)</code></pre><pre><code class="language-none">/home/travis/.julia/packages/GR/oiZD3/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre><p><img src="../tail.png" alt="tail"/></p><p>The equation to estimate <span>$K^{trans}_{RR}$</span> is:</p><div>\[K^{trans}_{RR} = \frac{C_{RR}(t) - C_{RR}(t_{start}) + k_{ep,RR} \cdot \int_{t_{start}}^t C_{RR}(\tau) d\tau}{\int_{t_{start}}^t C_p(\tau) d\tau}\]</div><p>where <span>$t_{start}$</span> is the start of the AIF tail (2 minutes in the above example), <span>$t$</span> is any timepoint after <span>$t_{start}$</span>, and we already estimated <span>$k_{ep,RR}$</span> earlier from the reference region model.</p><p>The equation can be solved by linear regressing with <span>$t = [t_{start+1}, ... ,t_{end}]$</span>, as shown next:</p><pre><code class="language-julia">using NumericalIntegration: cumul_integrate
+
+tail_start = findfirst(t .&gt; 2)
+crr_tail = crr[tail_start:end]
+cp_tail = cp[tail_start:end]
+t_tail = t[tail_start:end]
+
+numerator = crr_tail .- crr_tail[1] .+ est_kep_rr .* cumul_integrate(t_tail, crr_tail)
+denominator = cumul_integrate(t_tail, cp_tail)
+
+est_kt_rr = denominator \ numerator
+est_ve_rr = est_kt_rr / est_kep_rr
+println(&quot;Estimated Ktrans_rr from RRIFT fit: $(round(est_kt_rr, digits=4))&quot;)
+println(&quot;Estimated ve_rr: $(round(est_ve_rr, digits=4))&quot;)
+
+scatter(denominator, numerator; lineopts(&quot;Data&quot;)..., legend=:bottomright)
+plot!(denominator, denominator .* est_kt_rr;
+    lineopts(&quot;RRIFT fit&quot;)..., xlabel = &quot;Denominator&quot;, ylabel=&quot;Numerator&quot;)</code></pre><pre><code class="language-none">Estimated Ktrans_rr from RRIFT fit: 0.0795
+Estimated ve_rr: 0.2027
+/home/travis/.julia/packages/GR/oiZD3/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre><p><img src="../rrift_fit.png" alt="rrift_fit"/></p><p>Now we can use the estimated <span>$K^{trans}_{RR}$</span> and <span>$v_{e,RR}$</span> to convert the relative estimates from the reference region model into absolute estimates.</p><pre><code class="language-julia">est_tofts = fit_model(:extendedtofts, :lls, t = t, ct = single_ct, cp = cp).estimates
+est_cerrm = fit_cerrm(t = t, ct = single_ct, crr = crr, kep_rr = est_kep_rr)
+
+println(&quot;&quot;&quot;
+Comparison between Toft and RRM+RRIFT
+    - Tofts Ktrans: $(est_tofts.kt)
+    - RRIFT Ktrans: $(est_cerrm.rel_kt .* est_kt_rr)
+    --------------------------------------------
+    - Tofts ve: $(est_tofts.ve)
+    - RRIFT ve: $(est_cerrm.rel_ve .* est_ve_rr)
+    -------------------------------------------
+    - Tofts vp: $(est_tofts.vp)
+    - RRIFT vp: $(est_cerrm.rel_vp .* est_kt_rr)
+They&#39;re quite similar! :)
+&quot;&quot;&quot;)</code></pre><pre><code class="language-none">Comparison between Toft and RRM+RRIFT
+    - Tofts Ktrans: [0.08883412510741831]
+    - RRIFT Ktrans: [0.09310087206549063]
+    --------------------------------------------
+    - Tofts ve: [0.086019072805667]
+    - RRIFT ve: [0.08822036800572508]
+    -------------------------------------------
+    - Tofts vp: [0.038510892935098386]
+    - RRIFT vp: [0.035920132873421926]
+They&#39;re quite similar! :)</code></pre><h2 id="Voxel-wise-fitting-1"><a class="docs-heading-anchor" href="#Voxel-wise-fitting-1">Voxel-wise fitting</a><a class="docs-heading-anchor-permalink" href="#Voxel-wise-fitting-1" title="Permalink"></a></h2><p>The above was an example for a single tumour voxel.  This section will use voxel-wise fitting to show that the maps using RRIFT and similar to the Tofts model.</p><pre><code class="language-julia">tail_start = findfirst(t .&gt; 2)
+est_tofts = fit_model(:extendedtofts, :lls, t = t, ct = ct, cp = cp).estimates
+est_rrift = fit_cerrm_with_rrift(t = t, ct = ct, cp = cp, crr = crr, tail_start = tail_start)
+# Note: I didn&#39;t pass `kep_rr` as an input argument above. That&#39;s because the function will compute it on its own.
+
+estimates = (tofts = est_tofts, rrift = est_rrift)
+
+maps = Dict()
+for param in keys(est_tofts)
+    inner_dict = Dict()
+    for method in (:tofts, :rrift)
+        i_am_the_map = zeros(size(masks[&quot;tumour&quot;]))
+        i_am_the_map[masks[&quot;tumour&quot;]] .= estimates[method][param]
+        i_am_the_map = RRIFT.crop(i_am_the_map)
+        inner_dict[method] = i_am_the_map
+    end
+    maps[param] = inner_dict
+end
+
+slice = 6
+p1 = heatmap(maps[:kt][:tofts][:,:,slice], c=:cinferno, yflip=true, aspect_ratio=:equal, clim=(0, 0.2); lineopts(&quot;&quot;)..., title=&quot;Tofts&quot;, axis=nothing, xlabel=&quot;&quot;, ylabel=&quot;&quot;)
+p2 = heatmap(maps[:kt][:rrift][:,:,slice], c=:cinferno, yflip=true, aspect_ratio=:equal, clim=(0, 0.2); lineopts(&quot;&quot;)..., title=&quot;RRIFT&quot;, axis=nothing, xlabel=&quot;&quot;, ylabel=&quot;&quot;)
+plot(p1, p2, layout=(1,2))</code></pre><pre><code class="language-none">/home/travis/.julia/packages/GR/oiZD3/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre><p><img src="../voxelwise.png" alt="voxelwise"/></p><pre><code class="language-julia">println(&quot;&quot;&quot;
+Concordance correlation coefficients between Tofts and RRIFT fits
+    - for ktrans: $(ccc(est_tofts[:kt], est_rrift[:kt], lim=(0, 0.2)))
+    - for ve: $(ccc(est_tofts[:ve], est_rrift[:ve], lim=(0, 0.5)))
+    - for vp: $(ccc(est_tofts[:vp], est_rrift[:vp], lim=(0, 0.05)))
+&quot;&quot;&quot;)</code></pre><pre><code class="language-none">Concordance correlation coefficients between Tofts and RRIFT fits
+    - for ktrans: 0.9756413457779293
+    - for ve: 0.9721007341873623
+    - for vp: 0.9336773829305169</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../preprocessing/">« Pre-processing</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 26 November 2019 18:09">Tuesday 26 November 2019</span>. Using Julia version 1.2.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
