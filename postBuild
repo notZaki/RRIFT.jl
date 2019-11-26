@@ -1,0 +1,4 @@
+#!/bin/bash
+conda install -y -c conda-forge jupyterlab
+julia -e 'using WebIO, IJulia; WebIO.install_jupyter_nbextension(); WebIO.install_jupyter_labextension();'
+julia -e 'using RRIFT; download_invivo_studies(RRIFT.gbm_study_uids[8], destination = "./notebooks/data/tcga-gbm-dicom"); download_invivo_preprocessed(destination = "./notebooks/data/tcga-gbm-mat"); download_invivo_masks(destination="./notebooks/data/tcga-gbm-masks")'

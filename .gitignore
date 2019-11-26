@@ -1,0 +1,11 @@
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
+.DS_Store
+/dev/
+/docs/build/
+/docs/site/
+/data/
+*/data/
+*/.ipynb_checkpoints/
+*.swp
