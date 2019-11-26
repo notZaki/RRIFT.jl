@@ -15,7 +15,7 @@ The Tofts model will also be fitted.
 
 ## Downloading the pre-processed data
 
-For simplcity, we will use the pre-processed data which were previously generated.
+For simplicity, we will use data that has already been pre-processed and which can be downloaded by:
 
 ```@example ex
 mat_dir = "./data/tcga-gbm-mat"
@@ -42,9 +42,9 @@ Loaded the following variables:
 """)
 ```
 
-### Extended tofts model fit
+### Extended Tofts model fit
 
-The extended tofts model has the form
+The extended Tofts model has the form
 $$
 C_t(t) = K^{trans} \cdot C_p(t) \ast \exp(-k_{ep} \cdot t) + v_p \cdot C_p(t)
 $$

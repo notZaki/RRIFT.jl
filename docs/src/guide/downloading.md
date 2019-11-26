@@ -12,7 +12,7 @@ The in-vivo evaluation uses publicly available data in [The Cancer Genome Atlas 
 
 The TCGA-GBM collection contains nearly 600 studies with over 5,000 imaging series, however not all of these contain DCE-MRI scans. 
 The RRIFT manuscript used 8 DCE-MRI studies and their unique identifiers (Study Instance UIDs) were included in supplementary materials table S1.
-These UIDs can be used to download the dicom files.
+These UIDs can be used to download the DICOM files.
 
 ```@repl ex
 RRIFT.gbm_study_uids

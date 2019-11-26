@@ -9,12 +9,11 @@ println("Fitting")
 Before applying RRIFT, there's a couple of pre-processing steps including:
 1. Load imaging data from the VFA DICOM files & compute T1 maps
 2. Load imaging data form the DCE DICOM files & convert the DCE-MRI signal into tracer concentration
-    + Note to mybinder users: This step requires a lot of memory, so sadly your journey will end here, but the output from the remaining cells can still be viewed.
 3. Extract signal-time curves from the tumour, muscle, and artery for subsequent model fitting
 
 **Download DICOM files**
 
-The pre-processing steps will be shown for a single patien.
+The pre-processing steps will be shown for a single patient.
 First, the DICOM files must be downloaded.
 ```@example ex
 chosen_study_uid = RRIFT.gbm_study_uids[8]
@@ -164,7 +163,7 @@ nothing # Suppressing output
 
 The pre-processing steps—i.e. T1 mapping, signal-concentration conversion, masking—are needed for each study.
 Rather than repeating these steps every time, a wrapper function named `preprocess_dicom_to_mat` is used. 
-This function applies all of the preceeding steps and saves the result as a MATLAB-compatible .mat file.
+This function applies all of the preceding steps and saves the result as a MATLAB-compatible .mat file.
 
 ```@repl ex
 preprocessed_mat_files = preprocess_dicom_to_mat(
