@@ -18,6 +18,7 @@ using Test
     test_fits_b = process_patients(joinpath(mat_folder, test_study * ".mat"))
 
     thresh = 1e-9
+    println("Printing Δ between fits using local file versus downloaded file:")
     for param in (:kt, :kep, :ve, :vp, :kt_rr, :kep_rr, :ve_rr), method in (:tofts, :rrift)
         Δ = maximum(abs.(test_fits_a[param][method][1] .- test_fits_b[param][method][1]))
         println(string(param) * " " * string(method) * ": " * string(Δ))
@@ -25,7 +26,7 @@ using Test
     end
 
     fits = process_patients(mat_folder)
-
+    
     ccc_kt = ccc(fits[:kt], lim=(0, 0.2))
     ccc_ve = ccc(fits[:ve], lim=(0, 0.5))
     ccc_vp = ccc(fits[:vp], lim=(0, 0.05))
@@ -33,7 +34,9 @@ using Test
     ccc_ktrr = ccc(fits[:kt_rr])
     ccc_verr = ccc(fits[:ve_rr])
     ccc_keprr = ccc(fits[:kep_rr])
-
+    
+    println("======")
+    println("Printing CCC:")
     println("CCC [kt, ve vp]:")
     println([ccc_kt[:rrift][:tofts], ccc_ve[:rrift][:tofts], ccc_vp[:rrift][:tofts]])
     println("CCC [kt_rr, ve_rr, kep_rr]:")
