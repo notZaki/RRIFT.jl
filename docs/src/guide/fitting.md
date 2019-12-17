@@ -48,9 +48,9 @@ Loaded the following variables:
 ### Extended Tofts model fit
 
 The extended Tofts model has the form
-$$
+```math
 C_t(t) = K^{trans} \cdot C_p(t) \ast \exp(-k_{ep} \cdot t) + v_p \cdot C_p(t)
-$$
+```
 where $C_t$ is the concentration in tissue, $C_p$ is the input function, and $t$ is the time, i.e. `ct`, `cp` and, `t` in the code, respectively.
 The $\ast$ is a convolution while the fitting parameters are $K^{trans}$, $k_{ep}$, and $v_p$, along with a derived parameter $v_e = K^{trans} / k_{ep}$ (not shown in equation).
 
