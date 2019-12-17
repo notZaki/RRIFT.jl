@@ -31,17 +31,13 @@ function fit_cerrm(; kwargs...)
     return Perfusion.fit_cerrm_lls(; kwargs...).estimates
 end
 
-function fit_rrift(; kwargs...)
-    return Perfusion.fit_rrift(; kwargs...)
-end
-
 function fit_cerrm_with_rrift(; kwargs...)
-    return Perfusion.fit_cerrm_with_rrift(; kwargs...).estimates
+    return Perfusion.fit_rrift_with_cerrm(; kwargs...).estimates
 end
 
 positive_only_mask = Perfusion.positive_only_mask
 
-export fit_errm, fit_cerrm, fit_rrift, fit_cerrm_with_rrift
+export fit_errm, fit_cerrm, fit_cerrm_with_rrift
 export positive_only_mask
 
 end # module

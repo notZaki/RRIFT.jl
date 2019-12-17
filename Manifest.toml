@@ -347,7 +347,7 @@ version = "0.3.10"
 
 [[Perfusion]]
 deps = ["LinearAlgebra", "LsqFit", "NIfTI", "NamedTupleTools", "NumericalIntegration", "SpecialFunctions", "Statistics"]
-git-tree-sha1 = "348fcb94350265c75a6c71b8d43f874afa38bf79"
+git-tree-sha1 = "4b22c26208e3c21d8b8a8502b910d2ebe62f29f7"
 repo-rev = "dev"
 repo-url = "https://github.com/notZaki/Perfusion.jl.git"
 uuid = "f2c4f5d8-8176-4777-9c43-b2c4f12bfc82"
