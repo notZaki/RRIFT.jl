@@ -144,7 +144,7 @@ There is a peak in the histogram close to 0.3~0.4.
 We can estimate a single $k_{ep,RR}$ value by considering only the fits with positive estimates and then taking the interquartile mean of $k_{ep,RR}$ from those fits.
 
 ```@example ex
-positive_mask = RRIFT.positive_only_mask(est_errm_allvoxels)
+positive_mask = positive_only_mask(est_errm_allvoxels)
 est_kep_rr = interquartile_mean(est_errm_allvoxels.kep_rr[positive_mask])
 println("Estimated kep_rr: $est_kep_rr")
 ```
