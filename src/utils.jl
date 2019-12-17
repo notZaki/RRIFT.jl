@@ -1,13 +1,3 @@
-function make_folder(desired_path; remove_existing = false)
-    if !isdir(desired_path)
-        mkpath(desired_path)
-    elseif remove_existing
-        rm(desired_path; recursive = true)
-        mkpath(desired_path)
-    end
-    return desired_path
-end
-
 function ccc(x::AbstractVector, y::AbstractVector; lim=(0, Inf))
     x = vcat(x...)
     y = vcat(y...)

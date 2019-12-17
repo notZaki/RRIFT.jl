@@ -7,6 +7,7 @@ export apply_mask, crop, negatives_to_zero!, ccc
 
 using CancerImagingArchive: series, images
 using DICOM: dcm_parse, lookup
+using Perfusion: make_folder
 include("download_gbm_data.jl")
 export download_invivo_studies, download_invivo_masks, download_invivo_preprocessed
 export get_mask
@@ -23,13 +24,8 @@ export process_patients
 
 import Perfusion
 
-function fit_errm(; kwargs...)
-    return Perfusion.fit_errm_lls(; kwargs...).estimates
-end
-
-function fit_cerrm(; kwargs...)
-    return Perfusion.fit_cerrm_lls(; kwargs...).estimates
-end
+fit_errm(; kwargs...) = Perfusion.fit_errm_lls(; kwargs...).estimates
+fit_cerrm(; kwargs...) = Perfusion.fit_cerrm_lls(; kwargs...).estimates
 
 function fit_cerrm_with_rrift(; kwargs...)
     return Perfusion.fit_rrift_with_cerrm(; kwargs...).estimates
