@@ -17,7 +17,6 @@ jobs:
       julia: 1.3
       script: julia --project=docs -e '
           using Pkg;
-          Pkg.add(PackageSpec(url="https://github.com/notZaki/CancerImagingArchive.jl.git"));
           Pkg.add(PackageSpec(url="https://github.com/notZaki/Perfusion.jl.git"));
           Pkg.develop(PackageSpec(path=pwd()));
           Pkg.instantiate();
